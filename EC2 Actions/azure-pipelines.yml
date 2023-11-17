@@ -1,0 +1,42 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+parameters:
+- name: pipelineparameter1
+  displayName: Computer Name
+  type: string
+- name: pipelineparameter2
+  displayName: Choose An Action
+  type: string
+  values:
+  - ShutDown
+  - StartUp
+  - Restart
+
+variables: 
+- group: EC2-Actions-Pipeline-Credentials
+
+stages:
+  - stage: EC2_tasks
+    jobs:
+      - job: Preforming_required_task
+        continueOnError: 'false'
+        steps: 
+          - task: CmdLine@2
+            displayName: Install Python Packages
+            inputs:
+              script: pip install boto3
+
+          - task: PythonScript@0
+            inputs:
+              scriptSource: 'filePath'
+              scriptPath: '$(System.DefaultWorkingDirectory)/EC2 Action Script.py'
+              arguments: '${{ parameters.pipelineparameter1 }} ${{ parameters.pipelineparameter2 }} $(aws_access_key_id) $(aws_secret_access_key)'
