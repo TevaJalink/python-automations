@@ -14,6 +14,6 @@ Body = {
 	}
 }
 send_messages = client.publish(
-    TopicArn='arn:aws:sns:us-east-1:193244750463:ServiceNow-SNS-Topic',
+    TopicArn='',
     Message=f'{Body}'
 )
